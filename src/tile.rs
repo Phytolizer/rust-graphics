@@ -12,6 +12,7 @@ use sdl2::event::EventType::TextInput;
 #[derive(Clone)]
 #[derive(Copy)]
 #[derive(Display)]
+#[derive(Debug)]
 #[derive(Enum)]
 #[derive(EnumIter)]
 #[derive(PartialEq)]
@@ -26,6 +27,7 @@ pub const TILE_SIZE: u32 = 8;
 lazy_static! {
     pub static ref TILE_QUAD: Rect = Rect::new(0, 0, TILE_SIZE as u32, TILE_SIZE as u32);
 }
+#[derive(Debug)]
 pub struct Tile {
     id: TileId,
     neighbors: [Option<TileId>; 4],
@@ -54,7 +56,6 @@ impl Tile {
         self.solid = solid;
     }
     pub fn set_neighbors(&mut self, neighbors: [Option<TileId>; 4]) {
-        self.neighbors = neighbors;
         self.neighbor_bf = 0;
         for i in 0u8..4 {
             let neighbor_counts: bool;
@@ -67,6 +68,10 @@ impl Tile {
                 self.neighbor_bf += 2u32.pow(u32::from(i));
             }
         }
+        self.neighbors = neighbors;
+    }
+    pub fn get_id(&self) -> TileId {
+        self.id
     }
     pub fn get_frame(&self) -> u32 {
         self.frame

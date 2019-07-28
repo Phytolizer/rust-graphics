@@ -11,6 +11,7 @@ mod common;
 mod sprite;
 mod tile;
 mod viewport;
+mod world;
 
 use animated_sprite::AnimatedSprite;
 use enum_map::EnumMap;
@@ -23,8 +24,10 @@ use sdl2::image::InitFlag;
 use sdl2::pixels::Color;
 use sdl2::video::Window;
 use sdl2::rect::Rect;
-use crate::common::Size;
-use crate::tile::TileId;
+use crate::common::{Size, Position};
+use crate::tile::{TileId, TILE_SIZE};
+use crate::world::World;
+use crate::viewport::Viewport;
 
 fn main() {
     // init graphics stuff
@@ -56,9 +59,20 @@ fn main() {
     let mut total_frame_time: u128 = 0;
     let mut num_frames: u128 = 0;
     // define things here
-    let mut t = tile::Tile::new();
-    t.set_id(TileId::Dirt);
-    t.set_neighbors([Some(TileId::Dirt); 4]);
+    let w = (size.0 / TILE_SIZE) as usize;
+    let h = (size.1 / TILE_SIZE) as usize;
+    dbg!(w);
+    let mut my_world = World::new(w, h);
+    for i in 0usize..w {
+        for j in 0usize..h {
+            if j == 3 {
+                my_world.get_tile_mut(i, j).unwrap().set_id(TileId::Grass);
+            } else if j > 3 {
+                my_world.get_tile_mut(i, j).unwrap().set_id(TileId::Dirt);
+            }
+        }
+    }
+    my_world.update_cached_neighbors();
     // used for timing and average frame rate calculations
     let program_start = std::time::Instant::now();
     'running: loop {
@@ -81,8 +95,11 @@ fn main() {
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         canvas.clear();
         // Rendering code (each frame)
-        t.set_frame(rand::random::<u32>() % 3);
-        t.render(&tile_atlases, &mut canvas, Rect::new(0, 0, 64, 64)).unwrap();
+        for i in 0usize..w {
+            for j in 0usize..h {
+                my_world.get_tile(i, j).unwrap().render(&tile_atlases, &mut canvas, Rect::new(i as i32 * TILE_SIZE as i32, j as i32 * TILE_SIZE as i32, TILE_SIZE, TILE_SIZE));
+            }
+        }
         // Finished
         canvas.present();
         // Frame rate stabilization, never go above `fps`
