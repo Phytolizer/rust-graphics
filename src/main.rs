@@ -97,7 +97,7 @@ fn main() {
         // Rendering code (each frame)
         for i in 0usize..w {
             for j in 0usize..h {
-                my_world.get_tile(i, j).unwrap().render(&tile_atlases, &mut canvas, Rect::new(i as i32 * TILE_SIZE as i32, j as i32 * TILE_SIZE as i32, TILE_SIZE, TILE_SIZE));
+                my_world.get_tile(i, j).unwrap().render(&tile_atlases, &mut canvas, Rect::new(i as i32 * TILE_SIZE as i32, j as i32 * TILE_SIZE as i32, TILE_SIZE, TILE_SIZE)).unwrap();
             }
         }
         // Finished
