@@ -113,6 +113,8 @@ fn main() {
             ({:?} > {:?})", frame_time, wait_time);
         }
     }
-    println!("Average frame time: {} ms (ideal upper bound: {} ms)", (total_frame_time as f64) / (num_frames as f64) / 1000000f64, 1000f64 / fps as f64);
-    println!("Average frame rate: {:?} (ideal {})", (num_frames as f64) / (std::time::Instant::now() - program_start).as_nanos() as f64 * 1000000000f64, fps);
+    println!("Average frame time: {} ms (ideal upper bound: {} ms)",
+             (total_frame_time as f64) / (num_frames as f64) / 1000000f64, 1000f64 / fps as f64);
+    println!("Average frame rate: {:?} (ideal {})",
+             (num_frames as f64) / (std::time::Instant::now() - program_start).as_nanos() as f64 * 1000000000f64, fps);
 }

@@ -1,4 +1,8 @@
 use crate::common::{Position, Size};
+use sdl2::render::WindowCanvas;
+use crate::world::World;
+use sdl2::rect::Rect;
+use sdl2::video::WindowPos::Positioned;
 
 pub(crate) struct Viewport {
     pos: Position,
@@ -19,5 +23,15 @@ impl Viewport {
     }
     pub fn set_output_dimensions(&mut self, output_dimensions: Size) {
         self.output_dimensions = output_dimensions;
+    }
+    pub fn set_zoom(&mut self, zoom_factor: f32) {
+        self.zoom_factor = zoom_factor;
+    }
+    pub fn render(&self, canvas: &mut WindowCanvas, world: &World) -> Result<(), String> {
+        let bounds: Rect = Rect::new(self.pos.x - (self.output_dimensions.w / 2 * self.zoom_factor) as i32,
+                                     self.pos.y - (self.output_dimensions.h / 2 * self.zoom_factor) as i32,
+                                     self.output_dimensions.w * self.zoom_factor,
+                                     self.output_dimensions.h * self.zoom_factor
+        );
     }
 }
