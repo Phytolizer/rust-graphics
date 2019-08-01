@@ -3,11 +3,13 @@ use sdl2::render::WindowCanvas;
 use crate::world::World;
 use sdl2::rect::Rect;
 use sdl2::video::WindowPos::Positioned;
+use crate::tile::{Tile, TILE_SIZE};
+use sdl2::event::EventType::TextInput;
 
 pub(crate) struct Viewport {
     pos: Position,
     output_dimensions: Size,
-    zoom_factor: f32,
+    zoom_factor: f64,
 }
 
 impl Viewport {
@@ -24,14 +26,25 @@ impl Viewport {
     pub fn set_output_dimensions(&mut self, output_dimensions: Size) {
         self.output_dimensions = output_dimensions;
     }
-    pub fn set_zoom(&mut self, zoom_factor: f32) {
+    pub fn set_zoom(&mut self, zoom_factor: f64) {
         self.zoom_factor = zoom_factor;
     }
     pub fn render(&self, canvas: &mut WindowCanvas, world: &World) -> Result<(), String> {
-        let bounds: Rect = Rect::new(self.pos.x - (self.output_dimensions.w / 2 * self.zoom_factor) as i32,
-                                     self.pos.y - (self.output_dimensions.h / 2 * self.zoom_factor) as i32,
-                                     self.output_dimensions.w * self.zoom_factor,
-                                     self.output_dimensions.h * self.zoom_factor
+       let world_bounds: Rect = Rect::new(
+           self.pos.x - ((self.output_dimensions.w / 2) as f64 / self.zoom_factor / TILE_SIZE as f64) as i32,
+           self.pos.y - ((self.output_dimensions.h / 2) as f64 / self.zoom_factor / TILE_SIZE as f64) as i32,
+           (self.output_dimensions.w as f64 / self.zoom_factor / TILE_SIZE as f64) as u32,
+           (self.output_dimensions.h as f64 / self.zoom_factor / TILE_SIZE as f64) as u32
         );
+        for i in bounds.left()..bounds.right() {
+            for j in bounds.top()..bounds.bottom() {
+                if i < 0 || j < 0 || i > world.width() || j > world.height() {
+                    continue;
+                }
+                let t: &Tile = world.get_tile(i as usize, j as usize).unwrap();
+                // TODO t.render(tile_atlases, canvas, Rect::new())
+            }
+        }
+        Ok(())
     }
 }

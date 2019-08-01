@@ -22,6 +22,12 @@ impl World {
             tiles,
         }
     }
+    pub fn width(&self) -> usize {
+        self.width
+    }
+    pub fn height(&self) -> usize {
+        self.height
+    }
     pub fn get_tile(&self, x: usize, y: usize) -> Result<&Tile, String> {
         if x >= self.width || y >= self.height {
             Err(format!("The tile at ({}, {}) is out of bounds", x, y))

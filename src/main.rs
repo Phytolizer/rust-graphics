@@ -59,9 +59,8 @@ fn main() {
     let mut total_frame_time: u128 = 0;
     let mut num_frames: u128 = 0;
     // define things here
-    let w = (size.0 / TILE_SIZE) as usize;
-    let h = (size.1 / TILE_SIZE) as usize;
-    dbg!(w);
+    let w = 1000;
+    let h = 1000;
     let mut my_world = World::new(w, h);
     for i in 0usize..w {
         for j in 0usize..h {
@@ -73,6 +72,9 @@ fn main() {
         }
     }
     my_world.update_cached_neighbors();
+    let mut world_view = Viewport::new();
+    world_view.set_output_dimensions(Size { w: size.0, h: size.1 });
+    world_view.set_pos(Position { x: 500, y: 3 });
     // used for timing and average frame rate calculations
     let program_start = std::time::Instant::now();
     'running: loop {
